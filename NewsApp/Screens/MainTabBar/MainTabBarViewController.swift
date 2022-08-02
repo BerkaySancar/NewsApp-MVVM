@@ -7,26 +7,25 @@
 
 import UIKit
 
-class MainTabBarViewController: UITabBarController {
+final class MainTabBarViewController: UITabBarController {
 
-    private let homeViewController: UINavigationController = UINavigationController(rootViewController: HomeViewController())
-    private let favouritesViewController: UINavigationController = UINavigationController(rootViewController: FavouritesViewController())
+    private let homeViewController = UINavigationController(rootViewController: HomeViewController())
+    private let favoritesViewController = UINavigationController(rootViewController: FavoritesViewController())
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configure()
     }
-    
+// MARK: - UI Configure
     private func configure() {
         homeViewController.tabBarItem.image = UIImage(systemName: "house.fill")
-        favouritesViewController.tabBarItem.image = UIImage(systemName: "heart.fill")
+        favoritesViewController.tabBarItem.image = UIImage(systemName: "heart.fill")
         
-        homeViewController.title = "Home"
-        favouritesViewController.title = "Favourites"
+        homeViewController.title = "Home".localized()
+        favoritesViewController.title = "Favorites".localized()
         
         tabBar.tintColor = .label
         tabBar.backgroundColor = .systemBackground
-        setViewControllers([homeViewController, favouritesViewController], animated: true)
+        setViewControllers([homeViewController, favoritesViewController], animated: true)
     }
 }
