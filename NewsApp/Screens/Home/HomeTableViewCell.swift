@@ -20,7 +20,7 @@ final class HomeTableViewCell: UITableViewCell {
     
     private let newsTitleLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 0
+        label.numberOfLines = 4
         return label
     }()
 

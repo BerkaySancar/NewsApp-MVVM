@@ -10,42 +10,65 @@ import UIKit
 final class DetailsViewController: UIViewController {
     
     private let newsImage: UIImageView = {
-          let imageView = UIImageView()
-          return imageView
-      }()
-
-      private let newsTitleLabel: UILabel = {
-          let label = UILabel()
-          label.textColor = .label
-          label.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.bold)
-          label.numberOfLines = 5
-          return label
-      }()
+        let imageView = UIImageView()
+        return imageView
+    }()
     
-      private let newsTextView: UITextView = {
-          let textView = UITextView()
-          textView.textColor = .label
-          textView.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
-          textView.textAlignment = .justified
-          textView.isEditable = false
-          textView.isScrollEnabled = true
-          textView.isUserInteractionEnabled = true
-          textView.showsVerticalScrollIndicator = true
-          return textView
-      }()
-      
-      private let favoriteButton: UIButton = {
-          let button = UIButton()
-          button.tintColor = .systemRed
-          return button
-      }()
+    private let newsTitleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.bold)
+        label.numberOfLines = 5
+        return label
+    }()
+    
+    private let newsTextView: UITextView = {
+        let textView = UITextView()
+        textView.textColor = .label
+        textView.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+        textView.textAlignment = .justified
+        textView.isEditable = false
+        textView.isScrollEnabled = true
+        textView.isUserInteractionEnabled = true
+        textView.showsVerticalScrollIndicator = true
+        return textView
+    }()
+    
+    private let favoriteButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = .systemRed
+        button.setBackgroundImage(UIImage(systemName: "heart"), for: UIControl.State.normal)
+        button.setBackgroundImage(UIImage(systemName: "heart.fill"), for: UIControl.State.selected)
+        return button
+    }()
+    
+    private var viewModel = DetailsViewModel()
+    
+    init(_ news: Article) {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.viewModel.setNews(news)
+        self.viewModel.getFavorites()
+    }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        configure()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
+// MARK: - Lyfe Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel.dataRefreshed = { [weak self] article in
+            self?.design(article)
+        }
+        
+        viewModel.dataNotRefreshed = { [weak self] in
+            self?.errorMessage(title: "Warning!", message: "News could not found.")
+        }
+        
+        configure()
+    }
 // MARK: - UI Configure
     private func configure() {
         
@@ -54,18 +77,13 @@ final class DetailsViewController: UIViewController {
         view.addSubview(newsTitleLabel)
         view.addSubview(newsTextView)
         view.addSubview(favoriteButton)
-        
-        favoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: UIControl.State.normal)
-        favoriteButton.addTarget(self, action: #selector(favButtonTapped), for: UIControl.Event.touchUpInside)
-        
-        newsTitleLabel.text = "akjsdhakjs dhalkjh alkshd lkash lkahj a"
-        newsTextView.text = "aljksdhlaksjhdlj ahskjdh aksdhakjshd aklsh alksdjh alks dhaklshd"
-        
-        newsImage.backgroundColor = .gray
+        favoriteButton.addTarget(self,
+                         action: #selector(favButtonTapped),
+                         for: UIControl.Event.touchUpInside)
         
         newsImage.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.height.equalTo(200)
+            make.height.equalTo(300)
             make.top.equalTo(view.safeAreaLayoutGuide)
         }
         newsTitleLabel.snp.makeConstraints { make in
@@ -80,22 +98,25 @@ final class DetailsViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         favoriteButton.snp.makeConstraints { make in
-            make.top.equalTo(newsImage.snp.bottom).offset(10)
+            make.centerY.equalTo(newsTitleLabel.snp.centerY)
             make.right.equalToSuperview().offset(-5)
             make.width.height.equalTo(40)
         }
+        design(viewModel.news)
     }
     
-// MARK: - Favorite Button Action
-    @objc func favButtonTapped(_ sender: UIButton) {
+    private func design(_ article: Article?) {
         
-//        sender.isSelected = !sender.isSelected
+        guard let url = URL(string: article?.urlToImage ?? "") else { return }
+        newsImage.kf.setImage(with: url)
+        newsTitleLabel.text = article?.title
+        newsTextView.text = article?.description
+    }
+    // MARK: - Favorite Button Action
+    @objc private func favButtonTapped(_ sender: UIButton) {
         
-        if sender.isSelected {
-            sender.setBackgroundImage(UIImage(systemName: "heart.fill"), for: UIControl.State.normal)
-        } else {
-            sender.setBackgroundImage(UIImage(systemName: "heart"), for: UIControl.State.normal)
-        }
-        print("button tapped")
+        sender.isSelected.toggle()
+        
+        viewModel.addFavorites()
     }
 }

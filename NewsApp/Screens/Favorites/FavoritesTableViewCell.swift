@@ -13,6 +13,7 @@ class FavoritesTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.semibold)
         label.textColor = .label
+        label.numberOfLines = 0
         return label
     }()
 
@@ -34,6 +35,8 @@ class FavoritesTableViewCell: UITableViewCell {
         
         newsTitleLabel.snp.makeConstraints { make in
             make.left.top.equalToSuperview().offset(10)
+            make.left.equalToSuperview().offset(10)
+            make.right.equalToSuperview().offset(-10)
         }
     }
     

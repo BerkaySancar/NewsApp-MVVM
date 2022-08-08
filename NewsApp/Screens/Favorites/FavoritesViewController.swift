@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 final class FavoritesViewController: UIViewController {
     
@@ -14,11 +15,45 @@ final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesTableViewCell.self, forCellReuseIdentifier: FavoritesTableViewCell.identifier)
         return tableView
     }()
-
+    
+    private let refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        return refresh
+    }()
+    
+    private let viewModel: FavoritesViewModel?
+    
+    init(viewModel: FavoritesViewModel = FavoritesViewModel()) {
+        
+        self.viewModel = viewModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+// MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
-       configure()
+        
+        viewModel?.dataRefreshed = { [weak self] article in
+            self?.viewModel?.favorites = article
+            self?.favoritesTableView.reloadData()
+        }
+        
+        viewModel?.dataNotRefreshed = { [weak self] in
+            self?.errorMessage(title: "Warning!", message: "News could not found.")
+        }
+        
+        configure()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.viewModel?.getFavorites()
+        self.favoritesTableView.reloadData()
     }
     
 // MARK: - UI Configure
@@ -27,11 +62,21 @@ final class FavoritesViewController: UIViewController {
         view.addSubview(favoritesTableView)
         favoritesTableView.delegate = self
         favoritesTableView.dataSource = self
-        
+        favoritesTableView.refreshControl = refreshControl
+
         navigationController?.navigationBar.topItem?.title = "Favorites".localized()
+        
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: UIControl.Event.valueChanged)
         
         favoritesTableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+    }
+    
+    @objc private func refreshTableView(_ sender: AnyObject) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.viewModel?.getFavorites()
+            self.favoritesTableView.refreshControl?.endRefreshing()
         }
     }
 }
@@ -39,7 +84,7 @@ final class FavoritesViewController: UIViewController {
 extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 5
+        return viewModel?.favorites.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -50,11 +95,30 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.accessoryType = .disclosureIndicator
-        cell.design(newsTitle: "berkay")
+        cell.selectionStyle = .none
+        cell.design(newsTitle: viewModel?.favorites[indexPath.row].title ?? "")
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   commit editingStyle: UITableViewCell.EditingStyle,
+                   forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            viewModel?.favorites.remove(at: indexPath.row)
+            self.favoritesTableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+            self.favoritesTableView.reloadData()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard let url = URL(string: viewModel?.favorites[indexPath.row].url ?? "") else { return }
+        let viewController = SFSafariViewController(url: url)
+        present(viewController, animated: true)
     }
 }

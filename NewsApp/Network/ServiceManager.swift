@@ -18,6 +18,9 @@ extension ServiceManager {
         AF.request(url, encoding: JSONEncoding.default).validate().responseDecodable(of: T.self) { response in
             guard let data = response.value else {
                 print(response.error as Any)
+                if let error = response.error {
+                    failure(error)
+                }
                 return
             }
             success(data)
