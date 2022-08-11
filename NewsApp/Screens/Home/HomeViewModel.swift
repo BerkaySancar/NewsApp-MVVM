@@ -16,10 +16,10 @@ final class HomeViewModel {
     var dataNotRefreshed: (() -> Void)?
 
 // MARK: - GET DATA
-    func fetchSearchAndFilterNews(text: String?, to: String) {
+    func fetchSearchAndFilterNews(text: String?, from: String, to: String) {
         
         if let text = text, text.count > 2 {
-            newsService.searchAndFilterNews(text: text, to: to) { response in
+            newsService.searchAndFilterNews(text: text, from: from, to: to) { response in
                 self.newList = response?.articles ?? []
                 self.dataRefreshed?()
             } failure: { error in

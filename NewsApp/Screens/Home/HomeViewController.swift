@@ -31,7 +31,7 @@ final class HomeViewController: UIViewController {
     private let fromDateTextField: UITextField = {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
-        textField.backgroundColor = .systemGray5
+        textField.backgroundColor = .systemRed
         textField.textAlignment = .center
         textField.tintColor = .label
         textField.layer.cornerRadius = 10
@@ -43,7 +43,7 @@ final class HomeViewController: UIViewController {
     private let toDateTextField: UITextField = {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
-        textField.backgroundColor = .systemGray5
+        textField.backgroundColor = .systemGreen
         textField.textAlignment = .center
         textField.tintColor = .label
         textField.layer.cornerRadius = 10
@@ -54,7 +54,8 @@ final class HomeViewController: UIViewController {
     private let datePicker = UIDatePicker()
     private let toolbar = UIToolbar()
     private let formatter = DateFormatter()
-    private var dateString = ""
+    private var toDateString = ""
+    private var fromDateString = ""
     private let myTime = Date()
     
     private let viewModel: HomeViewModel
@@ -88,7 +89,9 @@ final class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.viewModel.fetchSearchAndFilterNews(text: "Apple", to: formatter.string(from: myTime))
+        self.viewModel.fetchSearchAndFilterNews(text: "Apple",
+                                                from: formatter.string(from: myTime),
+                                                to: formatter.string(from: myTime))
     }
     
 // MARK: - UI Configure
@@ -103,8 +106,8 @@ final class HomeViewController: UIViewController {
         view.addSubview(toDateTextField)
         
         formatter.dateFormat = "yyyy-MM-dd"
-        fromDateTextField.text = "\("Start: ".localized())\(formatter.string(from: myTime))"
-        toDateTextField.text = "\("End: ".localized())\(formatter.string(from: myTime))"
+        fromDateTextField.text = "\(formatter.string(from: myTime))"
+        toDateTextField.text = "\("Select: ".localized())\(formatter.string(from: myTime))"
         newsTableView.refreshControl = refreshControl
         newsTableView.delegate = self
         newsTableView.dataSource = self
@@ -161,12 +164,15 @@ final class HomeViewController: UIViewController {
 // MARK: - ToDateTextField Action
     @objc func textFieldDidChange(_ textField: UITextField) {
         
-        dateString = toDateTextField.text!
+        toDateString = toDateTextField.text!
+        fromDateString = fromDateTextField.text!
         
         if searchController.searchBar.text?.isEmpty == true {
-            viewModel.fetchSearchAndFilterNews(text: "Apple", to: dateString)
+            viewModel.fetchSearchAndFilterNews(text: "Apple", from: fromDateString, to: toDateString)
         } else {
-            viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, to: dateString)
+            viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text,
+                                               from: fromDateString,
+                                               to: toDateString)
         }
     
         self.newsTableView.reloadData()
@@ -174,8 +180,10 @@ final class HomeViewController: UIViewController {
 // MARK: - RefreshTableView Actions
     @objc private func refreshTableView(_ sender: AnyObject) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.viewModel.fetchSearchAndFilterNews(text: "Apple", to: "\(self.formatter.string(from: self.myTime))")
-            self.toDateTextField.text = "\("End: ".localized())\(self.formatter.string(from: self.myTime))"
+            self.viewModel.fetchSearchAndFilterNews(text: "Apple",
+                                                    from: "\(self.formatter.string(from: self.myTime))",
+                                                    to: "\(self.formatter.string(from: self.myTime))")
+            self.toDateTextField.text = "\("Select: ".localized())\(self.formatter.string(from: self.myTime))"
             self.newsTableView.refreshControl?.endRefreshing()
         }
     }
@@ -222,6 +230,6 @@ extension HomeViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         
-        viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, to: dateString)
+        viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, from: fromDateString, to: toDateString)
     }
 }
