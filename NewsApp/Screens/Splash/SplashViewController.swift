@@ -25,7 +25,8 @@ final class SplashViewController: UIViewController {
         label.text = "News App".localized()
         return label
     }()
-
+    
+// MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -119,7 +119,7 @@ final class DetailsViewController: UIViewController {
         
         sender.isSelected.toggle()
         
-        var items = viewModel.favorites.filter { $0.title == viewModel.news?.title }
+        let items = viewModel.favorites.filter { $0.title == viewModel.news?.title }
         
         if items.isEmpty {
             viewModel.addFavorites()
