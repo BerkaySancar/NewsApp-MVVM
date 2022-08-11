@@ -18,6 +18,7 @@ final class FavoritesViewModel {
     var dataRefreshed: (([Article]) -> Void)?
     var dataNotRefreshed: (() -> Void)?
     
+// MARK: - Get Favorites Method
     func getFavorites() {
         
         let defaults = UserDefaults.standard
@@ -31,7 +32,8 @@ final class FavoritesViewModel {
         self.dataRefreshed?(savedFavs)
     }
     
-    func saveFavorites() {
+// MARK: - Save Favorites Method
+    private func saveFavorites() {
         let defaults = UserDefaults.standard
         if let encodedData = try? JSONEncoder().encode(favorites) {
             defaults.set(encodedData, forKey: "fav1")

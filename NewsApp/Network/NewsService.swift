@@ -9,21 +9,19 @@ import Alamofire
 
 protocol ServiceProtocol {
     
-    func fetchNews(success: @escaping (BaseResponse?) -> Void, failure: @escaping (AFError) -> Void)
-    func searchNews(text: String, success: @escaping (BaseResponse?) -> Void, failure: @escaping (AFError) -> Void)
+    func searchAndFilterNews(text: String,
+                             to: String,
+                             success: @escaping (BaseResponse?) -> Void,
+                             failure: @escaping (AFError) -> Void)
 }
 
 final class NewsService: ServiceProtocol {
     
-    func fetchNews(success: @escaping (BaseResponse?) -> Void, failure: @escaping (AFError) -> Void) {
-        ServiceManager.shared.sendRequest(url: "\(Constants.BASE_URL + Constants.COUNTRY + Constants.API_KEY)") {(response: BaseResponse) in
-            success(response)
-        } failure: { error in
-            failure(error)
-        }
-    }
-    func searchNews(text: String, success: @escaping (BaseResponse?) -> Void, failure: @escaping (AFError) -> Void) {
-        ServiceManager.shared.sendRequest(url: "\(Constants.BASE_URL)q=\(text)&\(Constants.COUNTRY + Constants.API_KEY)") { (response: BaseResponse) in
+    func searchAndFilterNews(text: String,
+                             to: String,
+                             success: @escaping (BaseResponse?) -> Void,
+                             failure: @escaping (AFError) -> Void) {
+        ServiceManager.shared.sendRequest(url: "\(Constants.BASE_URL)q=\(text)&from=2022-08-10&to=\(to)\(Constants.LANGUAGE + Constants.API_KEY3)") { (response: BaseResponse) in
             success(response)
         } failure: { error in
             failure(error)

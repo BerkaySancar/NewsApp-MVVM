@@ -28,22 +28,34 @@ final class HomeViewController: UIViewController {
         return refresh
     }()
     
-    private let dateTextView: UITextView = {
-        let textView = UITextView()
-        textView.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
-        textView.backgroundColor = .systemGray5
-        textView.textAlignment = .center
-        textView.tintColor = .label
-        textView.layer.cornerRadius = 10
-        textView.isEditable = false
-        textView.isSelectable = true
-        textView.isScrollEnabled = false
-        return textView
+    private let fromDateTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
+        textField.backgroundColor = .systemGray5
+        textField.textAlignment = .center
+        textField.tintColor = .label
+        textField.layer.cornerRadius = 10
+        textField.tintColor = .clear
+        textField.isUserInteractionEnabled = false
+        return textField
+    }()
+    
+    private let toDateTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
+        textField.backgroundColor = .systemGray5
+        textField.textAlignment = .center
+        textField.tintColor = .label
+        textField.layer.cornerRadius = 10
+        textField.tintColor = .clear
+        return textField
     }()
     
     private let datePicker = UIDatePicker()
     private let toolbar = UIToolbar()
     private let formatter = DateFormatter()
+    private var dateString = ""
+    private let myTime = Date()
     
     private let viewModel: HomeViewModel
     
@@ -61,7 +73,7 @@ final class HomeViewController: UIViewController {
  // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+      
         configure()
         
         viewModel.dataRefreshed = { [weak self] in
@@ -76,7 +88,7 @@ final class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.viewModel.fetchNews()
+        self.viewModel.fetchSearchAndFilterNews(text: "Apple", to: formatter.string(from: myTime))
     }
     
 // MARK: - UI Configure
@@ -87,55 +99,83 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         view.addSubview(newsTableView)
-        view.addSubview(dateTextView)
-        dateTextView.text = "Filter Date".localized()
+        view.addSubview(fromDateTextField)
+        view.addSubview(toDateTextField)
+        
+        formatter.dateFormat = "yyyy-MM-dd"
+        fromDateTextField.text = "\("Start: ".localized())\(formatter.string(from: myTime))"
+        toDateTextField.text = "\("End: ".localized())\(formatter.string(from: myTime))"
         newsTableView.refreshControl = refreshControl
         newsTableView.delegate = self
         newsTableView.dataSource = self
         
         navigationItem.searchController = searchController
         searchController.searchResultsUpdater = self
-    
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: UIControl.Event.valueChanged)
         
-        dateTextView.snp.makeConstraints { make in
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: UIControl.Event.valueChanged)
+        toDateTextField.addTarget(self, action: #selector(HomeViewController.textFieldDidChange(_:)),
+                                for: .editingChanged)
+        
+        fromDateTextField.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.left.equalToSuperview().offset(4)
             make.width.equalTo(150)
             make.height.equalTo(30)
         }
+        
+        toDateTextField.snp.makeConstraints { make in
+            make.left.equalTo(fromDateTextField.snp.right).offset(4)
+            make.height.width.top.equalTo(fromDateTextField)
+        }
+    
         newsTableView.snp.makeConstraints { make in
-            make.top.equalTo(dateTextView.snp.bottom).offset(8)
+            make.top.equalTo(fromDateTextField.snp.bottom).offset(8)
             make.left.right.bottom.equalToSuperview()
         }
         configureDatePicker()
     }
+// MARK: - Date Picker Configure
+    
     private func configureDatePicker() {
         toolbar.sizeToFit()
         
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done,
                                          target: nil,
-                                         action: #selector(doneTapped))
+                                         action: #selector(datePickerDoneButton))
         
         toolbar.setItems([doneButton], animated: true)
         
-        dateTextView.inputAccessoryView = toolbar
-        dateTextView.inputView = datePicker
+        toDateTextField.inputAccessoryView = toolbar
+        toDateTextField.inputView = datePicker
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .inline
         datePicker.backgroundColor = .white
     }
     
-    @objc private func doneTapped() {
-        formatter.dateStyle = .long
-    
-        dateTextView.text = formatter.string(from: datePicker.date).localized()
+    @objc private func datePickerDoneButton() {
+        formatter.dateFormat = "yyyy-MM-dd"
+        toDateTextField.text = formatter.string(from: datePicker.date).localized()
+        textFieldDidChange(toDateTextField)
         self.view.endEditing(true)
     }
+// MARK: - ToDateTextField Action
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        
+        dateString = toDateTextField.text!
+        
+        if searchController.searchBar.text?.isEmpty == true {
+            viewModel.fetchSearchAndFilterNews(text: "Apple", to: dateString)
+        } else {
+            viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, to: dateString)
+        }
     
+        self.newsTableView.reloadData()
+}
+// MARK: - RefreshTableView Actions
     @objc private func refreshTableView(_ sender: AnyObject) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.viewModel.fetchNews()
+            self.viewModel.fetchSearchAndFilterNews(text: "Apple", to: "\(self.formatter.string(from: self.myTime))")
+            self.toDateTextField.text = "\("End: ".localized())\(self.formatter.string(from: self.myTime))"
             self.newsTableView.refreshControl?.endRefreshing()
         }
     }
@@ -182,6 +222,6 @@ extension HomeViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         
-        viewModel.searchNews(searchController.searchBar.text)
+        viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, to: dateString)
     }
 }

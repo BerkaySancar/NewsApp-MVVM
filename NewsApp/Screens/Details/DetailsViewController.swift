@@ -111,12 +111,21 @@ final class DetailsViewController: UIViewController {
         newsImage.kf.setImage(with: url)
         newsTitleLabel.text = article?.title
         newsTextView.text = article?.description
+        let item = viewModel.favorites.filter { $0.title == viewModel.news?.title }
+        favoriteButton.isSelected = !item.isEmpty
     }
     // MARK: - Favorite Button Action
     @objc private func favButtonTapped(_ sender: UIButton) {
         
         sender.isSelected.toggle()
         
-        viewModel.addFavorites()
+        var items = viewModel.favorites.filter { $0.title == viewModel.news?.title }
+        
+        if items.isEmpty {
+            viewModel.addFavorites()
+        } else {
+            let news = viewModel.favorites.filter { $0.title != viewModel.news?.title }
+            viewModel.favorites = news
+        }
     }
 }

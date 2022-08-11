@@ -5,8 +5,8 @@
 //  Created by Berkay Sancar on 26.07.2022.
 //
 
-import UIKit
 import Kingfisher
+import UIKit
 
 final class HomeTableViewCell: UITableViewCell {
     
@@ -52,7 +52,7 @@ final class HomeTableViewCell: UITableViewCell {
         }
         newsTitleLabel.snp.makeConstraints { make in
             make.left.equalTo(newsImageView.snp.right).offset(5)
-            make.right.equalToSuperview().offset(-5)
+            make.right.equalToSuperview().offset(-8)
             make.top.equalTo(newsImageView.snp.top)
         }
     }

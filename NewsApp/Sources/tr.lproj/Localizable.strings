@@ -12,5 +12,9 @@
 "News App" = "Haberler Uygulaması";
 "Warning!" = "Uyarı!";
 "News could not found." = "Haberler bulunamadı.";
-"country=us" = "country=tr";
+"List is empty!" = "Liste boş!";
+"us" = "tr";
+"en" = "tr";
 "Filter Date" = "Tarih Filtrele";
+"Start: " = "Başlangıç: ";
+"End: " = "Bitiş: ";

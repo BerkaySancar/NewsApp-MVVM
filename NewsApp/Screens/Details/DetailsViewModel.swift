@@ -8,7 +8,7 @@
 import Foundation
 
 struct DetailsViewModel {
- 
+    
     var news: Article?
     var dataRefreshed: ((Article?) -> Void)?
     var dataNotRefreshed: (() -> Void)?

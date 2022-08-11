@@ -5,8 +5,8 @@
 //  Created by Berkay Sancar on 24.07.2022.
 //
 
-import UIKit
 import SafariServices
+import UIKit
 
 final class FavoritesViewController: UIViewController {
     
@@ -44,7 +44,7 @@ final class FavoritesViewController: UIViewController {
         }
         
         viewModel?.dataNotRefreshed = { [weak self] in
-            self?.errorMessage(title: "Warning!", message: "News could not found.")
+            self?.errorMessage(title: "Warning!", message: "List is empty!")
         }
         
         configure()
@@ -111,6 +111,7 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
         if editingStyle == .delete {
             viewModel?.favorites.remove(at: indexPath.row)
             self.favoritesTableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+            self.viewModel?.getFavorites()
             self.favoritesTableView.reloadData()
         }
     }
