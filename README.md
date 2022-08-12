@@ -1,4 +1,4 @@
-                                News App - iOS
+                                       News App - iOS
 
 ## Features
 
