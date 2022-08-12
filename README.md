@@ -8,6 +8,7 @@
 - [KingFisher](https://github.com/onevcat/Kingfisher)
 - Generic Network Layer
 - Localization
+- [SwiftLint](https://github.com/realm/SwiftLint)
 - UserDefaults
 - Safari Services
 
