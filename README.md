@@ -6,6 +6,7 @@
 - SnapKit
 - Alamofire
 - Kingfisher
+- Generic Network Layer
 - Localization
 - UserDefaults
 - Safari Services
