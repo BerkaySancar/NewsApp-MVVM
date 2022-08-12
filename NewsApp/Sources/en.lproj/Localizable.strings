@@ -5,3 +5,15 @@
   Created by Berkay Sancar on 24.07.2022.
   
 */
+
+"home" = "Home";
+"favorites" = "Favorites";
+"type_here_to_search" = "Type hear to search";
+"news_app" = "News App";
+"warning" = "Warning!";
+"news_could_not_found" = "News could not found.";
+"list_is_empty" = "List is empty!";
+"us" = "us";
+"en" = "en";
+"filter_date" = "Filter Date";
+"select" = "Select: ";

@@ -12,7 +12,7 @@ final class HomeViewController: UIViewController {
     private let searchController: UISearchController = {
         let searchController = UISearchController()
         searchController.obscuresBackgroundDuringPresentation = false // hide background
-        searchController.searchBar.placeholder = "Type here to search".localized()
+        searchController.searchBar.placeholder = "type_here_to_search".localized()
         searchController.searchBar.searchBarStyle = .prominent
         return searchController
     }()
@@ -82,7 +82,7 @@ final class HomeViewController: UIViewController {
         }
         
         viewModel.dataNotRefreshed = { [weak self] in
-            self?.errorMessage(title: "Warning!", message: "News could not found.")
+            self?.errorMessage(title: "warning", message: "news_could_not_found.")
         }
     }
     
@@ -98,7 +98,7 @@ final class HomeViewController: UIViewController {
     private func configure() {
         
         navigationController?.navigationBar.tintColor = .label
-        navigationController?.navigationBar.topItem?.title = "Home".localized()
+        navigationController?.navigationBar.topItem?.title = "home".localized()
         view.backgroundColor = .systemBackground
         
         view.addSubview(newsTableView)
@@ -107,7 +107,7 @@ final class HomeViewController: UIViewController {
         
         formatter.dateFormat = "yyyy-MM-dd"
         fromDateTextField.text = "\(formatter.string(from: myTime))"
-        toDateTextField.text = "\("Select: ".localized())\(formatter.string(from: myTime))"
+        toDateTextField.text = "\("select".localized())\(formatter.string(from: myTime))"
         newsTableView.refreshControl = refreshControl
         newsTableView.delegate = self
         newsTableView.dataSource = self
@@ -183,7 +183,7 @@ final class HomeViewController: UIViewController {
             self.viewModel.fetchSearchAndFilterNews(text: "Apple",
                                                     from: "\(self.formatter.string(from: self.myTime))",
                                                     to: "\(self.formatter.string(from: self.myTime))")
-            self.toDateTextField.text = "\("Select: ".localized())\(self.formatter.string(from: self.myTime))"
+            self.toDateTextField.text = "\("select".localized())\(self.formatter.string(from: self.myTime))"
             self.newsTableView.refreshControl?.endRefreshing()
         }
     }
@@ -229,7 +229,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 extension HomeViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
-        
-        viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, from: fromDateString, to: toDateString)
+    viewModel.fetchSearchAndFilterNews(text: searchController.searchBar.text, from: fromDateString, to: toDateString)
     }
 }

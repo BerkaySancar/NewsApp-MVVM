@@ -6,14 +6,14 @@
   
 */
 
-"Home" = "Ana Sayfa";
-"Favorites" = "Favoriler";
-"Type here to search" = "Arama yapmak için buraya yazın";
-"News App" = "Haberler Uygulaması";
-"Warning!" = "Uyarı!";
-"News could not found." = "Haberler bulunamadı.";
-"List is empty!" = "Liste boş!";
+"home" = "Ana Sayfa";
+"favorites" = "Favoriler";
+"type_here_to_search" = "Arama yapmak için buraya yazın";
+"news_app" = "Haberler Uygulaması";
+"warning" = "Uyarı!";
+"news_could_not_found" = "Haberler bulunamadı.";
+"list_is_empty" = "Liste boş!";
 "us" = "tr";
 "en" = "tr";
-"Filter Date" = "Tarih Filtrele";
-"Select: " = "Seç: ";
+"filter_date" = "Tarih Filtrele";
+"select" = "Seç: ";

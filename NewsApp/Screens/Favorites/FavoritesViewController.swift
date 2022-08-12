@@ -44,7 +44,7 @@ final class FavoritesViewController: UIViewController {
         }
         
         viewModel?.dataNotRefreshed = { [weak self] in
-            self?.errorMessage(title: "Warning!", message: "List is empty!")
+            self?.errorMessage(title: "warning", message: "list_is_empty")
         }
         
         configure()
@@ -64,7 +64,7 @@ final class FavoritesViewController: UIViewController {
         favoritesTableView.dataSource = self
         favoritesTableView.refreshControl = refreshControl
 
-        navigationController?.navigationBar.topItem?.title = "Favorites".localized()
+        navigationController?.navigationBar.topItem?.title = "favorites".localized()
         
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: UIControl.Event.valueChanged)
         

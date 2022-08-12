@@ -22,7 +22,7 @@ final class SplashViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30)
         label.textColor = .label
-        label.text = "News App".localized()
+        label.text = "news_app".localized()
         return label
     }()
     

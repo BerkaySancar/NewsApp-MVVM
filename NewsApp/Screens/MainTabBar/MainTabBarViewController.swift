@@ -21,8 +21,8 @@ final class MainTabBarViewController: UITabBarController {
         homeViewController.tabBarItem.image = UIImage(systemName: "house.fill")
         favoritesViewController.tabBarItem.image = UIImage(systemName: "heart.fill")
         
-        homeViewController.title = "Home".localized()
-        favoritesViewController.title = "Favorites".localized()
+        homeViewController.title = "home".localized()
+        favoritesViewController.title = "favorites".localized()
         
         tabBar.tintColor = .label
         tabBar.backgroundColor = .systemBackground

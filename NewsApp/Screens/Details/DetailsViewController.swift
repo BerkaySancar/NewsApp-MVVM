@@ -64,7 +64,7 @@ final class DetailsViewController: UIViewController {
         }
         
         viewModel.dataNotRefreshed = { [weak self] in
-            self?.errorMessage(title: "Warning!", message: "News could not found.")
+            self?.errorMessage(title: "warning", message: "news_could_not_found.")
         }
         
         configure()
